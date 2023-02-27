@@ -30,6 +30,7 @@ internal class FixtureBuilderGenerator(
         containingFile: KSFile,
         processedFixtures: List<ProcessedFixture>,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+        prefix: String,
     ) {
         val fileNameWithoutExtension = File(containingFile.fileName).nameWithoutExtension
         val filename = fileNameWithoutExtension + OUTPUT_FIXTURE_FILENAME_SUFFIX
@@ -41,6 +42,7 @@ internal class FixtureBuilderGenerator(
                     randomize = randomize,
                     containingFile = containingFile,
                     fixtureAdapters = fixtureAdapters,
+                    prefix = prefix,
                 ),
             )
                 .ensureNestedImports(processedFixture = it)
@@ -54,8 +56,9 @@ internal class FixtureBuilderGenerator(
         randomize: Boolean,
         containingFile: KSFile,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+        prefix: String,
     ): FunSpec {
-        val functionName = "create$parentName${simpleName.replaceFirstChar { it.uppercaseChar() }}"
+        val functionName = "$prefix$parentName${simpleName.replaceFirstChar { it.uppercaseChar() }}".replaceFirstChar { it.lowercaseChar() }
 
         val funSpec = FunSpec.builder(name = functionName)
             .addOriginatingKSFile(containingFile)
@@ -65,6 +68,7 @@ internal class FixtureBuilderGenerator(
                 parameterSpec = it.toParameterSpec(
                     randomize = randomize,
                     fixtureAdapters = fixtureAdapters,
+                    prefix = prefix,
                 ),
             )
         }
@@ -76,11 +80,13 @@ internal class FixtureBuilderGenerator(
     private fun ProcessedFixtureParameter.toParameterSpec(
         randomize: Boolean,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+        prefix: String,
     ): ParameterSpec {
         val defaultValue = valueGenerator.generateDefaultValue(
             randomize = randomize,
             parameter = this,
             fixtureAdapters = fixtureAdapters,
+            prefix = prefix,
         )
         return ParameterSpec.builder(name = name, type = type)
             .defaultValue("%L", defaultValue)

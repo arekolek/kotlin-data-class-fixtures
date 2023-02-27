@@ -50,6 +50,8 @@ internal class FixtureProcessor(
 
     private val runFixtures = options["fixtures.run"]?.let { it.equals("true", true) } ?: true
 
+    private val prefix = options["fixtures.prefix"] ?: "create"
+
     override fun process(resolver: Resolver): List<KSAnnotated> {
         if (!runFixtures) {
             return emptyList()
@@ -107,6 +109,7 @@ internal class FixtureProcessor(
                 containingFile = containingFile,
                 processedFixtures = processedFixtures,
                 fixtureAdapters = processedFixtureAdapters,
+                prefix = prefix,
             )
         }
     }

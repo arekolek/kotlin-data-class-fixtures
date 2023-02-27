@@ -43,6 +43,12 @@ The naming convention for the generated function is the class' name with the
 This function will be placed in a file with the `FooFixture.kt` name, and the file 
 will be placed in the `Foo`'s package under the `build/generated/ksp/kotlin/` path.
 
+You can change the default `create` prefix to some other value, for example to generate `foo` instead:
+
+```gradle
+ksp.arg("fixtures.prefix", "")
+```
+
 ## Randomize your data
 The generated functions have default values for their parameters. The values are [standard](#Supported-field-types) 
 based on the parameter's type. If we want to assign random values then we can use the next KSP option:

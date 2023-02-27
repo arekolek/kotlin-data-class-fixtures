@@ -1,7 +1,6 @@
 package com.theblueground.fixtures
 
 import com.squareup.kotlinpoet.TypeName
-import java.util.*
 import kotlin.random.Random
 
 /**
@@ -23,12 +22,14 @@ internal class ParameterValueGenerator {
         randomize: Boolean,
         parameter: ProcessedFixtureParameter,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+        prefix: String,
     ): String = when {
         parameter.type.isNullable && randomize && Random.nextBoolean() -> "null"
         else -> generateParameterValue(
             randomize = randomize,
             parameter = parameter,
             fixtureAdapters = fixtureAdapters,
+            prefix = prefix,
         )
     }
 
@@ -36,17 +37,18 @@ internal class ParameterValueGenerator {
         randomize: Boolean,
         parameter: ProcessedFixtureParameter,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+        prefix: String,
     ): String = when (parameter) {
         is ProcessedFixtureParameter.PrimitiveParameter ->
             generatePrimitiveValue(randomize = randomize, parameter = parameter)
         is ProcessedFixtureParameter.KnownTypeParameter ->
             generateKnownTypeValue(randomize = randomize, parameter = parameter)
         is ProcessedFixtureParameter.FixtureParameter ->
-            generateFixtureValue(parameter = parameter)
+            generateFixtureValue(parameter = parameter, prefix = prefix)
         is ProcessedFixtureParameter.EnumParameter ->
             generateEnumValue(randomize = randomize, parameter = parameter)
         is ProcessedFixtureParameter.SealedParameter ->
-            generateSealedValue(randomize = randomize, parameter = parameter)
+            generateSealedValue(randomize = randomize, parameter = parameter, prefix = prefix)
         is ProcessedFixtureParameter.CollectionParameter ->
             generateCollectionValue(parameter = parameter)
         is ProcessedFixtureParameter.FixtureAdapter ->
@@ -217,7 +219,8 @@ internal class ParameterValueGenerator {
 
     private fun generateFixtureValue(
         parameter: ProcessedFixtureParameter.FixtureParameter,
-    ): String = "${parameter.packageName}.create${parameter.typeName}()"
+        prefix: String,
+    ): String = "${parameter.packageName}." + "${prefix}${parameter.typeName}()".replaceFirstChar { it.lowercaseChar() }
 
     private fun generateEnumValue(
         randomize: Boolean,
@@ -235,6 +238,7 @@ internal class ParameterValueGenerator {
     private fun generateSealedValue(
         randomize: Boolean,
         parameter: ProcessedFixtureParameter.SealedParameter,
+        prefix: String,
     ): String {
         val sealedEntry = if (randomize) {
             parameter.entries.random()
@@ -244,7 +248,7 @@ internal class ParameterValueGenerator {
 
         return when {
             sealedEntry.isObject -> "${parameter.typeName}.${sealedEntry.name}"
-            sealedEntry.isFixture -> "create${parameter.typeName}${sealedEntry.name}()"
+            sealedEntry.isFixture -> "$prefix${parameter.typeName}${sealedEntry.name}()".replaceFirstChar { it.lowercaseChar() }
             else -> throw IllegalArgumentException(
                 "Sealed data classes that are fields of a Fixture should be annotated with @Fixture too",
             )
