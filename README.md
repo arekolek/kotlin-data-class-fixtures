@@ -1,8 +1,8 @@
 <p align="left">
-  <img src="https://github.com/bluegroundltd/fixtures/blob/master/images/logo.png" />
+  <img src="https://github.com/arekolek/kotlin-data-class-fixtures/blob/master/images/logo.png" />
 </p>
 
-# Fixtures [![CI](https://github.com/bluegroundltd/fixtures/actions/workflows/ci_test.yaml/badge.svg?branch=master)](https://github.com/bluegroundltd/fixtures/actions/workflows/ci_test.yaml)
+# Fixtures [![CI](https://github.com/arekolek/kotlin-data-class-fixtures/actions/workflows/ci_test.yaml/badge.svg?branch=master)](https://github.com/arekolek/kotlin-data-class-fixtures/actions/workflows/ci_test.yaml)
 
 `Fixtures` is a library that helps us to instantiate data classes for our tests easily. We were inspired by this [blog post](https://phauer.com/2018/best-practices-unit-testing-kotlin/#use-helper-functions-with-default-arguments-to-ease-object-creation),
 and decided to use [KSP](https://kotlinlang.org/docs/ksp-overview.html) to automate the generation of the described functions.
@@ -11,8 +11,8 @@ and decided to use [KSP](https://kotlinlang.org/docs/ksp-overview.html) to autom
 Before using this library, we must set up KSP in our project. We can follow the instructions [here](https://kotlinlang.org/docs/ksp-quickstart.html#use-your-own-processor-in-a-project). Then we must include the following dependency:
 
 ``` 
-implementation("io.github.bluegroundltd:fixtures-annotations:1.0.7")
-implementation("io.github.bluegroundltd:fixtures:1.0.7")
+implementation("io.github.arekolek:fixtures-annotations:1.0.7")
+implementation("io.github.arekolek:fixtures:1.0.7")
 ```
 
 ## How to
