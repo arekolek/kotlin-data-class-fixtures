@@ -7,4 +7,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Not used `FixtureAdapter` that was defined for one of the supported types.
  
-[Unreleased]: https://github.com/bluegroundltd/fixtures/compare/1.0.7..HEAD
+[Unreleased]: https://github.com/arekolek/kotlin-data-class-fixtures/compare/1.0.7..HEAD
