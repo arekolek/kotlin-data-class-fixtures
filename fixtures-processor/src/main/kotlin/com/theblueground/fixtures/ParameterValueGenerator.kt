@@ -24,6 +24,7 @@ internal class ParameterValueGenerator {
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
         prefix: String,
     ): String = when {
+        parameter.type.isNullable && !randomize -> "null" // TODO this branch should be configurable to keep compatibility?
         parameter.type.isNullable && randomize && Random.nextBoolean() -> "null"
         else -> generateParameterValue(
             randomize = randomize,
