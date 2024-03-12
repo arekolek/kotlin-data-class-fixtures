@@ -68,7 +68,7 @@ internal class ProcessedParameterMapper(
                 parameterType = parameterType,
             )
             else -> throw IllegalArgumentException(
-                "${parameterType.toClassName().simpleName} is not a known type and no related @FixtureAdapter was found",
+                "${parameterType.toClassName()} is not a known type and no related @FixtureAdapter was found",
             )
         }
     }

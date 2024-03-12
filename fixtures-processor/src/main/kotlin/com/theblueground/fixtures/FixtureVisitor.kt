@@ -23,10 +23,8 @@ internal class FixtureVisitor(
     )
 
     override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
-        if (!classDeclaration.isDataClass) {
-            throw IllegalStateException(
-                "${Fixture::class.simpleName} can be used only in a data class.",
-            )
+        require(classDeclaration.isDataClass || classDeclaration.isObject) {
+            "$classDeclaration must be a data class or an object to use ${Fixture::class.simpleName} annotation"
         }
 
         val containingFile = classDeclaration.containingFile!!
@@ -44,8 +42,9 @@ internal class FixtureVisitor(
 
     private fun extractParameters(
         classDeclaration: KSClassDeclaration,
-    ): List<ProcessedFixtureParameter> = classDeclaration.primaryConstructor!!
-        .parameters
+    ): List<ProcessedFixtureParameter> = classDeclaration.primaryConstructor
+        ?.parameters
+        .orEmpty()
         .map { processedParameterMapper.mapParameter(parameterValue = it) }
 
     private fun extractParentName(parentDeclaration: KSDeclaration?): String {
