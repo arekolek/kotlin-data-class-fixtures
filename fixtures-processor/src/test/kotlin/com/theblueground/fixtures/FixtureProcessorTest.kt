@@ -571,7 +571,7 @@ class FixtureProcessorTest : KSPTest() {
     }
 
     @Test
-    fun `should generate a builder function with standard data and nullable arguments`() {
+    fun `should generate a builder function with null arguments`() {
         // Given
         val fixtureSource = """
                     package $packageName
@@ -610,11 +610,9 @@ class FixtureProcessorTest : KSPTest() {
 
                         object Second : TestSealed()
 
-                        @Fixture
                         data class Third(val name: String) : TestSealed()
                     }
 
-                    @Fixture
                     data class TestSubClass(
                         val stringValue: String,
                         val doubleValue: Double,
@@ -650,20 +648,20 @@ class FixtureProcessorTest : KSPTest() {
             import kotlin.collections.Map
 
             public fun create$fixtureName(
-              stringValue: String? = "stringValue",
-              doubleValue: Double? = 0.0,
-              floatValue: Float? = 0f,
-              booleanValue: Boolean? = false,
-              intValue: Int? = 0,
-              longValue: Long? = 0L,
-              nestedTestValue: TestSubClass? = $packageName.createTestSubClass(),
-              dateValue: Date? = Date(0),
-              uuidValue: UUID? = UUID.fromString("00000000-0000-0000-0000-000000000000"),
-              bigDecimalValue: BigDecimal? = BigDecimal.ZERO,
-              bigIntegerValue: BigInteger? = BigInteger.ZERO,
-              testEnumValue: TestEnum? = TestEnum.FIRST_ENUM,
-              collectionValue: Map<Int, String>? = emptyMap(),
-              testSealedValue: TestSealed? = TestSealed.First,
+              stringValue: String? = null,
+              doubleValue: Double? = null,
+              floatValue: Float? = null,
+              booleanValue: Boolean? = null,
+              intValue: Int? = null,
+              longValue: Long? = null,
+              nestedTestValue: TestSubClass? = null,
+              dateValue: Date? = null,
+              uuidValue: UUID? = null,
+              bigDecimalValue: BigDecimal? = null,
+              bigIntegerValue: BigInteger? = null,
+              testEnumValue: TestEnum? = null,
+              collectionValue: Map<Int, String>? = null,
+              testSealedValue: TestSealed? = null,
             ): TestClass = $packageName.$fixtureName(
             	stringValue = stringValue,
             	doubleValue = doubleValue,
@@ -679,25 +677,6 @@ class FixtureProcessorTest : KSPTest() {
             	testEnumValue = testEnumValue,
             	collectionValue = collectionValue,
             	testSealedValue = testSealedValue
-            )
-
-            public fun createTestSealedThird(name: String = "name"): TestSealed.Third =
-                $packageName.TestSealed.Third(
-            	name = name
-            )
-
-            public fun createTestSubClass(
-              stringValue: String = "stringValue",
-              doubleValue: Double = 0.0,
-              floatValue: Float = 0f,
-              booleanValue: Boolean = false,
-              intValue: Int = 0,
-            ): TestSubClass = $packageName.TestSubClass(
-            	stringValue = stringValue,
-            	doubleValue = doubleValue,
-            	floatValue = floatValue,
-            	booleanValue = booleanValue,
-            	intValue = intValue
             )
 
         """.trimIndent()

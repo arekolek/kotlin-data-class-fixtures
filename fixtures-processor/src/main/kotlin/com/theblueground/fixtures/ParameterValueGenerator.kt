@@ -23,6 +23,7 @@ internal class ParameterValueGenerator {
         parameter: ProcessedFixtureParameter,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ): String = when {
+        parameter.type.isNullable && !kspArguments.randomize -> "null" // TODO this branch should be configurable to keep compatibility?
         parameter.type.isNullable && kspArguments.randomize && Random.nextBoolean() -> "null"
         else -> generateParameterValue(
             kspArguments = kspArguments,
