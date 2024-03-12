@@ -240,18 +240,20 @@ internal class ParameterValueGenerator {
         parameter: ProcessedFixtureParameter.SealedParameter,
         prefix: String,
     ): String {
+        val entries = parameter.entries.filter { it.isObject || it.isFixture }
+        require(entries.isNotEmpty()) {
+            "At least one sealed data class annotated with @Fixture is required in: ${parameter.type.toString().removeSuffix("?")}"
+        }
         val sealedEntry = if (randomize) {
-            parameter.entries.random()
+            entries.random()
         } else {
-            parameter.entries.first()
+            entries.first()
         }
 
         return when {
             sealedEntry.isObject -> "${parameter.typeName}.${sealedEntry.name}"
             sealedEntry.isFixture -> "$prefix${parameter.typeName}${sealedEntry.name}()".replaceFirstChar { it.lowercaseChar() }
-            else -> throw IllegalArgumentException(
-                "Sealed data classes that are fields of a Fixture should be annotated with @Fixture too",
-            )
+            else -> error("${sealedEntry.name} in ${parameter.typeName} was expected to be annotated with @Fixture")
         }
     }
 
