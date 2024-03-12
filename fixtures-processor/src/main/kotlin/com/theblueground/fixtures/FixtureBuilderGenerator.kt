@@ -93,9 +93,15 @@ internal class FixtureBuilderGenerator(
             .build()
     }
 
-    private fun ProcessedFixture.buildFunctionStatement(): String =
+    private fun ProcessedFixture.buildFunctionStatement(): String {
+        val invocation = if (parameters.isNotEmpty()) {
+            parameters.joinToString(",\n", prefix = "(\n", postfix = "\n)") { "\t${it.name} = ${it.name}" }
+        } else {
+            ""
+        }
         // Usage of qualified name ensures that everything will work, even with enclosing classes.
-        "return $qualifiedName(\n${parameters.joinToString(",\n") { "\t${it.name} = ${it.name}" }}\n)"
+        return "return $qualifiedName$invocation"
+    }
 
     // This function is just a workaround for this problem:
     // https://github.com/square/kotlinpoet/issues/1406
