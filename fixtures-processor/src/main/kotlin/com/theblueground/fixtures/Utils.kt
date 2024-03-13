@@ -30,8 +30,20 @@ internal val KSDeclaration.isPrimitive: Boolean
     get() = simpleName.asString().isPrimitive()
 
 private val knownTypes: Set<String> = setOf(
-    "Date", "TimeZone", "UUID", "LocalDate", "LocalTime", "LocalDateTime", "ZonedDateTime",
-    "Instant", "OffsetTime", "OffsetDateTime", "ZoneId", "BigDecimal", "BigInteger",
+    "Date",
+    "TimeZone",
+    "UUID",
+    "LocalDate",
+    "LocalTime",
+    "LocalDateTime",
+    "ZonedDateTime",
+    "Instant",
+    "OffsetTime",
+    "OffsetDateTime",
+    "ZoneId",
+    "Duration",
+    "BigDecimal",
+    "BigInteger",
 )
 
 internal val KSDeclaration.isKnownType: Boolean
