@@ -135,6 +135,7 @@ internal class ParameterValueGenerator {
         "OffsetTime" -> generateOffsetTimeValue(randomize = randomize)
         "OffsetDateTime" -> generateOffsetDateTimeValue(randomize = randomize)
         "ZoneId" -> generateZoneIdValue(randomize = randomize)
+        "Duration" -> generateDuration(randomize = randomize)
         "BigDecimal" -> generateBigDecimalValue(randomize = randomize)
         "BigInteger" -> generateBigIntegerValue(randomize = randomize)
         else -> throw NotAssignException(parameter = parameter)
@@ -156,6 +157,12 @@ internal class ParameterValueGenerator {
         "UUID.randomUUID()"
     } else {
         "UUID.fromString(\"00000000-0000-0000-0000-000000000000\")"
+    }
+
+    private fun generateDuration(randomize: Boolean): String = if (randomize) {
+        "Duration.ofMillis(Random.nextLong(20))"
+    } else {
+        "Duration.ZERO"
     }
 
     private fun generateLocalDateValue(randomize: Boolean): String = if (randomize) {
