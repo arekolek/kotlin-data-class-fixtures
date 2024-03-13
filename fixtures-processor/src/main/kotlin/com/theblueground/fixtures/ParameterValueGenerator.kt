@@ -261,7 +261,7 @@ internal class ParameterValueGenerator {
             sealedEntry.isObject -> "${parameter.typeName}.${sealedEntry.name}"
             sealedEntry.isFixture -> {
                 val functionName = "${kspArguments.prefix}${parameter.typeName}${sealedEntry.name}".replaceFirstChar { it.lowercaseChar() }
-                "$functionName()"
+                "${parameter.packageName}.$functionName()"
             }
 
             else -> error("${parameter.typeName}.${sealedEntry.name} must be an object or fixture based on filter in preconditions")

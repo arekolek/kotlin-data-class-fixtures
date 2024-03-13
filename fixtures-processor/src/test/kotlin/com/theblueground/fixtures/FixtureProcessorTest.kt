@@ -117,7 +117,7 @@ class FixtureProcessorTest : KSPTest() {
               testEnumValue: TestEnum = TestEnum.FIRST_ENUM,
               collectionValue: Map<Int, String> = emptyMap(),
               testSealedObjectValue: TestSealedObject = TestSealedObject.Second,
-              testSealedDataClassValue: TestSealedDataClass = createTestSealedDataClassSecond(),
+              testSealedDataClassValue: TestSealedDataClass = $packageName.createTestSealedDataClassSecond(),
             ): TestClass = $packageName.$fixtureName(
             	stringValue = stringValue,
             	doubleValue = doubleValue,
@@ -203,7 +203,7 @@ class FixtureProcessorTest : KSPTest() {
               testEnumValue: TestEnum = TestEnum.FIRST_ENUM,
               collectionValue: Map<Int, String> = emptyMap(),
               testSealedObjectValue: TestSealedObject = TestSealedObject.Second,
-              testSealedDataClassValue: TestSealedDataClass = createTestSealedDataClassSecond(),
+              testSealedDataClassValue: TestSealedDataClass = $packageName.createTestSealedDataClassSecond(),
             ): TestClass = $packageName.$fixtureName(
             	stringValue = stringValue,
             	doubleValue = doubleValue,
@@ -292,7 +292,7 @@ class FixtureProcessorTest : KSPTest() {
               testEnumValue: TestEnum = TestEnum.FIRST_ENUM,
               collectionValue: Map<Int, String> = emptyMap(),
               testSealedObjectValue: TestSealedObject = TestSealedObject.Second,
-              testSealedDataClassValue: TestSealedDataClass = newTestSealedDataClassSecond(),
+              testSealedDataClassValue: TestSealedDataClass = $packageName.newTestSealedDataClassSecond(),
             ): TestClass = $packageName.$fixtureName(
             	stringValue = stringValue,
             	doubleValue = doubleValue,
@@ -381,7 +381,7 @@ class FixtureProcessorTest : KSPTest() {
               testEnumValue: TestEnum = TestEnum.FIRST_ENUM,
               collectionValue: Map<Int, String> = emptyMap(),
               testSealedObjectValue: TestSealedObject = TestSealedObject.Second,
-              testSealedDataClassValue: TestSealedDataClass = testSealedDataClassSecond(),
+              testSealedDataClassValue: TestSealedDataClass = $packageName.testSealedDataClassSecond(),
             ): TestClass = $packageName.$fixtureName(
             	stringValue = stringValue,
             	doubleValue = doubleValue,
@@ -498,6 +498,64 @@ class FixtureProcessorTest : KSPTest() {
             public fun create$fixtureName(bigDecimalAliasValue: BigDecimal = BigDecimal.ZERO): TestClass =
                 $packageName.$fixtureName(
             	bigDecimalAliasValue = bigDecimalAliasValue
+            )
+
+        """.trimIndent()
+        assertThat(generatedContent).isEqualTo(expected)
+    }
+
+    @Test
+    fun `should generate a builder function with sealed class fixture from different package as parameter`() {
+        // Given
+        val sealedClassName = "TestSealed"
+        val nestedFixtureName = "TestSubClass"
+        val nestedPackageName = "$packageName.nested"
+        val fixtureSource = """
+                    package $packageName
+
+                    import com.theblueground.fixtures.Fixture
+                    import $nestedPackageName.$sealedClassName
+
+                    @Fixture
+                    data class $fixtureName(
+                        val nestedTestValue: $sealedClassName,
+                    )
+        """.trimIndent()
+        val nestedFixtureSource = """
+                    package $nestedPackageName
+
+                    import com.theblueground.fixtures.Fixture
+
+                    sealed class $sealedClassName
+
+                    @Fixture
+                    data class $nestedFixtureName(
+                        val stringValue: String,
+                    ) : $sealedClassName()
+        """.trimIndent()
+        val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
+        val nestedFixtureFile = kotlin(name = "$nestedFixtureName.kt", contents = nestedFixtureSource)
+
+        // When
+        val result = compile(
+            arguments = mapOf("fixtures.run" to "true"),
+            sourceFiles = listOf(fixtureFile, nestedFixtureFile),
+        )
+        val generatedContent = getGeneratedContent(
+            packageName = packageName,
+            filename = "${fixtureName}Fixture.kt",
+        )
+
+        // Then
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        val expected = """
+            package $packageName
+
+            import $nestedPackageName.$sealedClassName
+
+            public fun create$fixtureName(nestedTestValue: $sealedClassName = $nestedPackageName.create$nestedFixtureName()):
+                $fixtureName = $packageName.$fixtureName(
+            	nestedTestValue = nestedTestValue
             )
 
         """.trimIndent()
