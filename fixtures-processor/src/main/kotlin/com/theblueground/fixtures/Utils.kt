@@ -8,7 +8,7 @@ import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.ksp.toTypeName
+import com.squareup.kotlinpoet.ksp.toClassName
 
 private val primitives: Set<String> = setOf(
     "String",
@@ -22,7 +22,7 @@ private val primitives: Set<String> = setOf(
 
 internal fun KSType.hasFixtureAdapter(
     fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
-): Boolean = fixtureAdapters[toTypeName()] != null
+): Boolean = fixtureAdapters[toClassName()] != null
 
 internal fun String.isPrimitive(): Boolean = primitives.contains(this)
 
