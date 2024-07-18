@@ -45,7 +45,13 @@ internal class FixtureVisitor(
     ): List<ProcessedFixtureParameter> = classDeclaration.primaryConstructor
         ?.parameters
         .orEmpty()
-        .map { processedParameterMapper.mapParameter(parameterValue = it) }
+        .map {
+            try {
+                processedParameterMapper.mapParameter(parameterValue = it)
+            } catch (e: IllegalArgumentException) {
+                throw IllegalArgumentException("Parameters in ${classDeclaration.toClassName()} must be compatible with fixtures", e)
+            }
+        }
 
     private fun extractParentName(parentDeclaration: KSDeclaration?): String {
         parentDeclaration ?: return ""
