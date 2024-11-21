@@ -259,10 +259,10 @@ internal class ParameterValueGenerator {
         }
 
         return when {
-            sealedEntry.isObject -> "${parameter.typeName}.${sealedEntry.name}"
+            sealedEntry.isObject -> sealedEntry.name
             sealedEntry.isFixture ->
-                "${parameter.packageName}." + "$prefix${parameter.typeName}${sealedEntry.name}()".replaceFirstChar { it.lowercaseChar() }
-            else -> error("${sealedEntry.name} in ${parameter.typeName} was expected to be annotated with @Fixture")
+                "${parameter.packageName}." + "$prefix${sealedEntry.name.replace(".", "")}()".replaceFirstChar { it.lowercaseChar() }
+            else -> error("${sealedEntry.name} was expected to be annotated with @Fixture")
         }
     }
 
