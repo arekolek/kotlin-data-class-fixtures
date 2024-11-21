@@ -129,15 +129,13 @@ internal class ProcessedParameterMapper(
         entries = parameterClassDeclaration.mapSealedEntries(),
     )
 
-    private fun KSDeclaration.mapSealedEntries(): List<ProcessedFixtureParameter.SealedParameter.SealedEntry> =
-        (this as KSClassDeclaration)
-            .declarations
-            .filterIsInstance<KSClassDeclaration>()
+    private fun KSClassDeclaration.mapSealedEntries(): List<ProcessedFixtureParameter.SealedParameter.SealedEntry> =
+        getSealedSubclasses()
             .map {
                 ProcessedFixtureParameter.SealedParameter.SealedEntry(
                     isObject = it.isObject,
                     isFixture = it.isFixture,
-                    name = it.simpleName.asString(),
+                    name = it.toClassName().simpleNames.joinToString("."),
                 )
             }
             .toList()

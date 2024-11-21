@@ -945,4 +945,50 @@ class FixtureProcessorTest : KSPTest() {
         """.trimIndent()
         assertThat(generatedContent).isEqualTo(expected)
     }
+
+    @Test
+    fun `should generate a builder function for top-level sealed class with sibling subclasses`() {
+        // Given
+        val fixtureSource = """
+                    package $packageName
+
+                    import com.theblueground.fixtures.Fixture
+
+                    sealed class TextData
+
+                    object Empty : TextData()
+
+                    @Fixture
+                    data class Plain(val text: String) : TextData()
+
+                    @Fixture
+                    data class $fixtureName(val text: TextData)
+        """.trimIndent()
+        val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
+
+        // When
+        val result = compile(sourceFiles = listOf(fixtureFile))
+        val generatedContent = getGeneratedContent(
+            packageName = packageName,
+            filename = "${fixtureName}Fixture.kt",
+        )
+
+        // Then
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        val expected = """
+            package $packageName
+
+            import kotlin.String
+
+            public fun createPlain(text: String = "text"): Plain = $packageName.Plain(
+            	text = text
+            )
+
+            public fun create$fixtureName(text: TextData = Empty): $fixtureName = $packageName.$fixtureName(
+            	text = text
+            )
+
+        """.trimIndent()
+        assertThat(generatedContent).isEqualTo(expected)
+    }
 }

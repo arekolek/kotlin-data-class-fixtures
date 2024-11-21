@@ -258,9 +258,9 @@ internal class ParameterValueGenerator {
         }
 
         return when {
-            sealedEntry.isObject -> "${parameter.typeName}.${sealedEntry.name}"
+            sealedEntry.isObject -> sealedEntry.name
             sealedEntry.isFixture -> {
-                val functionName = "${kspArguments.prefix}${parameter.typeName}${sealedEntry.name}".replaceFirstChar { it.lowercaseChar() }
+                val functionName = "${kspArguments.prefix}${sealedEntry.name.replace(".", "")}".replaceFirstChar { it.lowercaseChar() }
                 "${parameter.packageName}.$functionName()"
             }
 
