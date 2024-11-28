@@ -21,7 +21,13 @@ internal class ProcessedParameterMapper(
     fun mapParameter(parameterValue: KSValueParameter): ProcessedFixtureParameter {
         val resolvedType = parameterValue.type.resolve()
         return when (val declaration = resolvedType.declaration) {
-            is KSTypeAlias -> mapParameter(parameterValue, declaration.type.resolve())
+            is KSTypeAlias -> {
+                if (resolvedType.isMarkedNullable) {
+                    mapParameter(parameterValue, declaration.type.resolve().makeNullable())
+                } else {
+                    mapParameter(parameterValue, declaration.type.resolve())
+                }
+            }
             else -> mapParameter(parameterValue, resolvedType)
         }
     }
