@@ -906,4 +906,43 @@ class FixtureProcessorTest : KSPTest() {
         """.trimIndent()
         assertThat(generatedContent).isEqualTo(expected)
     }
+
+    @Test
+    fun `should preserve nullability of typealias parameter`() {
+        // Given
+        val fixtureSource = """
+                    package $packageName
+
+                    import com.theblueground.fixtures.Fixture
+
+                    import java.math.BigDecimal
+
+                    typealias BigDecimalAlias = BigDecimal
+
+                    @Fixture
+                    data class $fixtureName(val nullableValue: BigDecimalAlias?)
+        """.trimIndent()
+        val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
+
+        // When
+        val result = compile(sourceFiles = listOf(fixtureFile))
+        val generatedContent = getGeneratedContent(
+            packageName = packageName,
+            filename = "${fixtureName}Fixture.kt",
+        )
+
+        // Then
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        val expected = """
+            package $packageName
+
+            import java.math.BigDecimal
+
+            public fun create$fixtureName(nullableValue: BigDecimal? = null): $fixtureName = $packageName.$fixtureName(
+            	nullableValue = nullableValue
+            )
+
+        """.trimIndent()
+        assertThat(generatedContent).isEqualTo(expected)
+    }
 }
