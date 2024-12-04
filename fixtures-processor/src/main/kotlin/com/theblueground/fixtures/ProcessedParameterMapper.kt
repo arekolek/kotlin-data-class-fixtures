@@ -2,7 +2,6 @@ package com.theblueground.fixtures
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
-import com.google.devtools.ksp.symbol.KSDeclarationContainer
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.google.devtools.ksp.symbol.KSValueParameter
@@ -128,14 +127,11 @@ internal class ProcessedParameterMapper(
     ): ProcessedFixtureParameter.SealedParameter = ProcessedFixtureParameter.SealedParameter(
         name = name,
         type = parameterType.toTypeName(),
-        entries = parameterClassDeclaration.mapSealedEntries() +
-            parameterClassDeclaration.containingFile?.mapSealedEntries().orEmpty() +
-            (parameterClassDeclaration.parentDeclaration as? KSDeclarationContainer)?.mapSealedEntries().orEmpty(),
+        entries = parameterClassDeclaration.mapSealedEntries(),
     )
 
-    private fun KSDeclarationContainer.mapSealedEntries(): List<ProcessedFixtureParameter.SealedParameter.SealedEntry> =
-        declarations
-            .filterIsInstance<KSClassDeclaration>()
+    private fun KSClassDeclaration.mapSealedEntries(): List<ProcessedFixtureParameter.SealedParameter.SealedEntry> =
+        getSealedSubclasses()
             .map {
                 ProcessedFixtureParameter.SealedParameter.SealedEntry(
                     isObject = it.isObject,
