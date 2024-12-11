@@ -54,6 +54,8 @@ internal class ParameterValueGenerator {
             generateCollectionValue(parameter = parameter)
         is ProcessedFixtureParameter.FixtureAdapter ->
             generateFixtureAdapterValue(parameter = parameter, fixtureAdapters = fixtureAdapters)
+        is ProcessedFixtureParameter.NullableParameter ->
+            error("Randomize is enabled but can't generate a value for ${parameter.type}, it is not a known type and no related @FixtureAdapter was found (${fixtureAdapters.keys})")
     }
 
     private fun generatePrimitiveValue(

@@ -51,11 +51,9 @@ internal class ProcessedParameterMapper(
                 name = name,
                 parameterType = parameterType,
             )
-            parameterClassDeclaration.isFixture -> mapFixtureParameter(
-                name = name,
-                parameterType = parameterType,
-            )
-            parameterValue.isFixtureInOtherModule -> mapFixtureParameter(
+            parameterClassDeclaration.isFixture ||
+                parameterValue.isFixtureInOtherModule
+            -> mapFixtureParameter(
                 name = name,
                 parameterType = parameterType,
             )
@@ -70,6 +68,10 @@ internal class ProcessedParameterMapper(
                 parameterClassDeclaration = parameterClassDeclaration,
             )
             parameterClassDeclaration.isCollection -> mapCollectionParameter(
+                name = name,
+                parameterType = parameterType,
+            )
+            parameterType.isMarkedNullable -> mapNullableParameter(
                 name = name,
                 parameterType = parameterType,
             )
@@ -162,6 +164,18 @@ internal class ProcessedParameterMapper(
         val type = parameterType.toTypeName()
 
         return ProcessedFixtureParameter.FixtureAdapter(
+            name = name,
+            type = type,
+        )
+    }
+
+    private fun mapNullableParameter(
+        name: String,
+        parameterType: KSType,
+    ): ProcessedFixtureParameter.NullableParameter {
+        val type = parameterType.toTypeName()
+
+        return ProcessedFixtureParameter.NullableParameter(
             name = name,
             type = type,
         )
