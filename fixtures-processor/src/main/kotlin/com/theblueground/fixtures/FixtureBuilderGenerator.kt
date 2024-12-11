@@ -62,12 +62,17 @@ internal class FixtureBuilderGenerator(
             .addOriginatingKSFile(containingFile)
 
         parameters.forEach {
-            funSpec.addParameter(
-                parameterSpec = it.toParameterSpec(
-                    kspArguments = kspArguments,
-                    fixtureAdapters = fixtureAdapters,
-                ),
-            )
+            try {
+                funSpec.addParameter(
+                    parameterSpec = it.toParameterSpec(
+                        kspArguments = kspArguments,
+                        fixtureAdapters = fixtureAdapters,
+
+                    ),
+                )
+            } catch (e: IllegalStateException) {
+                throw IllegalStateException("Parameters in $classType must be compatible with fixtures", e)
+            }
         }
 
         return funSpec.addStatement(format = buildFunctionStatement())

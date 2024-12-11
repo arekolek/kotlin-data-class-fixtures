@@ -119,6 +119,14 @@ internal sealed class ProcessedFixtureParameter(
         name = name,
         type = type,
     )
+
+    data class NullableParameter(
+        override val name: String,
+        override val type: TypeName,
+    ) : ProcessedFixtureParameter(
+        name = name,
+        type = type,
+    )
 }
 
 internal val ProcessedFixtureParameter.packageName: String

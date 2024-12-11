@@ -991,4 +991,39 @@ class FixtureProcessorTest : KSPTest() {
         """.trimIndent()
         assertThat(generatedContent).isEqualTo(expected)
     }
+
+    @Test
+    fun `should generate null default for nullable arbitrary type when randomize is disabled`() {
+        // Given
+        val fixtureSource = """
+                    package $packageName
+
+                    import com.theblueground.fixtures.Fixture
+
+                    class Recipient(val name: String)
+
+                    @Fixture
+                    data class $fixtureName(val recipient: Recipient?)
+        """.trimIndent()
+        val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
+
+        // When
+        val result = compile(sourceFiles = listOf(fixtureFile))
+        val generatedContent = getGeneratedContent(
+            packageName = packageName,
+            filename = "${fixtureName}Fixture.kt",
+        )
+
+        // Then
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        val expected = """
+            package $packageName
+
+            public fun create$fixtureName(recipient: Recipient? = null): $fixtureName = $packageName.$fixtureName(
+            	recipient = recipient
+            )
+
+        """.trimIndent()
+        assertThat(generatedContent).isEqualTo(expected)
+    }
 }
