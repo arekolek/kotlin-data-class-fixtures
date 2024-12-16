@@ -37,6 +37,8 @@ internal class ParameterValueGenerator {
         parameter: ProcessedFixtureParameter,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ): String = when (parameter) {
+        is ProcessedFixtureParameter.ValueClassParameter ->
+            generateValueClassValue(kspArguments = kspArguments, parameter = parameter, fixtureAdapters = fixtureAdapters)
         is ProcessedFixtureParameter.PrimitiveParameter ->
             generatePrimitiveValue(randomize = kspArguments.randomize, parameter = parameter)
         is ProcessedFixtureParameter.KnownTypeParameter ->
@@ -53,6 +55,14 @@ internal class ParameterValueGenerator {
             generateFixtureAdapterValue(parameter = parameter, fixtureAdapters = fixtureAdapters)
         is ProcessedFixtureParameter.NullableParameter ->
             error("Randomize is enabled but can't generate a value for ${parameter.type}, it is not a known type and no related @FixtureAdapter was found (${fixtureAdapters.keys})")
+    }
+
+    private fun generateValueClassValue(
+        kspArguments: KspArguments,
+        parameter: ProcessedFixtureParameter.ValueClassParameter,
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+    ): String {
+        return "${parameter.typeName}(${generateParameterValue(kspArguments, parameter.parameter, fixtureAdapters)})"
     }
 
     private fun generatePrimitiveValue(

@@ -17,6 +17,17 @@ internal sealed class ProcessedFixtureParameter(
     open val name: String,
     open val type: TypeName,
 ) {
+    /**
+     * Keeps all the processed information for a primitive type field.
+     */
+    data class ValueClassParameter(
+        override val name: String,
+        override val type: TypeName,
+        val parameter: ProcessedFixtureParameter,
+    ) : ProcessedFixtureParameter(
+        name = name,
+        type = type,
+    )
 
     /**
      * Keeps all the processed information for a primitive type field.
