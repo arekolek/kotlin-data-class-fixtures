@@ -40,6 +40,8 @@ internal class ParameterValueGenerator {
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
         prefix: String,
     ): String = when (parameter) {
+        is ProcessedFixtureParameter.ValueClassParameter ->
+            generateValueClassValue(randomize = randomize, parameter = parameter, fixtureAdapters = fixtureAdapters, prefix = prefix)
         is ProcessedFixtureParameter.PrimitiveParameter ->
             generatePrimitiveValue(randomize = randomize, parameter = parameter)
         is ProcessedFixtureParameter.KnownTypeParameter ->
@@ -56,6 +58,15 @@ internal class ParameterValueGenerator {
             generateFixtureAdapterValue(parameter = parameter, fixtureAdapters = fixtureAdapters)
         is ProcessedFixtureParameter.NullableParameter ->
             error("Randomize is enabled but can't generate a value for ${parameter.type}, it is not a known type and no related @FixtureAdapter was found (${fixtureAdapters.keys})")
+    }
+
+    private fun generateValueClassValue(
+        randomize: Boolean,
+        parameter: ProcessedFixtureParameter.ValueClassParameter,
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+        prefix: String,
+    ): String {
+        return "${parameter.typeName}(${generateParameterValue(randomize, parameter.parameter, fixtureAdapters, prefix)})"
     }
 
     private fun generatePrimitiveValue(

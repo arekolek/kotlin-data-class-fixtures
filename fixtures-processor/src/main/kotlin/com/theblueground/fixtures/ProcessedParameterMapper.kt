@@ -39,6 +39,11 @@ internal class ProcessedParameterMapper(
         val parameterClassDeclaration = parameterType.declaration as KSClassDeclaration
 
         return when {
+            parameterClassDeclaration.isValueClass -> mapValueClassParameter(
+                name = name,
+                parameterType = parameterType,
+                parameterClassDeclaration = parameterClassDeclaration,
+            )
             parameterType.hasFixtureAdapter(processedFixtureAdapters) -> mapFixtureAdapterParameter(
                 name = name,
                 parameterType = parameterType,
@@ -81,6 +86,16 @@ internal class ProcessedParameterMapper(
             )
         }
     }
+
+    private fun mapValueClassParameter(
+        name: String,
+        parameterType: KSType,
+        parameterClassDeclaration: KSClassDeclaration,
+    ): ProcessedFixtureParameter.ValueClassParameter = ProcessedFixtureParameter.ValueClassParameter(
+        name = name,
+        type = parameterType.toTypeName(),
+        parameter = mapParameter(requireNotNull(parameterClassDeclaration.primaryConstructor).parameters.single()),
+    )
 
     private fun mapPrimitiveParameter(
         name: String,

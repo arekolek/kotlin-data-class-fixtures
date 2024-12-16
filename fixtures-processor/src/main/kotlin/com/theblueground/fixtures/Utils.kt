@@ -51,6 +51,9 @@ internal val KSDeclaration.isKnownType: Boolean
 
 internal fun String.isKnownType(): Boolean = knownTypes.contains(this)
 
+internal val KSDeclaration.isValueClass: Boolean
+    get() = modifiers.contains(Modifier.VALUE)
+
 internal val KSDeclaration.isDataClass: Boolean
     // Unfortunately, this will work only if the data class is on tha same gradle module
     // We can not take a similar approach to enum. Check here: https://github.com/google/ksp/issues/736
