@@ -238,7 +238,7 @@ internal class ParameterValueGenerator {
         prefix: String,
         parameter: ProcessedFixtureParameter.FixtureParameter,
     ): String {
-        val functionName = "$prefix${parameter.typeName}".replaceFirstChar { it.lowercaseChar() }
+        val functionName = "$prefix${parameter.typeName.replace(".", "")}".replaceFirstChar { it.lowercaseChar() }
         return "${parameter.packageName}.$functionName()"
     }
 

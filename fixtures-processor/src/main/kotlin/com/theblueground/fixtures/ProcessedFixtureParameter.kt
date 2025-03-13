@@ -153,7 +153,7 @@ internal val ProcessedFixtureParameter.packageName: String
 
 internal val ProcessedFixtureParameter.typeName: String
     get() = when (val type = this.type) {
-        is ClassName -> type.canonicalName.removePrefix(type.packageName).replace(".", "")
+        is ClassName -> type.canonicalName.removePrefix("${type.packageName}.")
         is ParameterizedTypeName -> type.rawType.simpleName
         Dynamic,
         is LambdaTypeName,

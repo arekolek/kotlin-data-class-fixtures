@@ -789,17 +789,26 @@ class FixtureProcessorTest : KSPTest() {
 
                     import com.theblueground.fixtures.Fixture
                     import com.theblueground.fixtures.FixtureAdapter
+                    import somefixture.Foo.Spam
 
                     @Fixture
-                    data class Foo(val baz: Baz) {
+                    data class Foo(val baz: Baz, val spam: Spam) {
                         @Fixture
                         data class Baz(val text: String)
+
+                        enum class Spam {
+                            EGGS
+                        }
                     }
 
                     @Fixture
-                    data class Bar(val baz: Baz) {
+                    data class Bar(val baz: Baz, val spam: Spam) {
                         @Fixture
                         data class Baz(val number: Int)
+
+                        enum class Spam {
+                            EGGS
+                        }
                     }
         """.trimIndent()
         val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
@@ -819,16 +828,20 @@ class FixtureProcessorTest : KSPTest() {
                     import kotlin.Int
                     import kotlin.String
 
-                    public fun createFoo(baz: Foo.Baz = somefixture.createFooBaz()): Foo = somefixture.Foo(
-                    	baz = baz
+                    public fun createFoo(baz: Foo.Baz = somefixture.createFooBaz(), spam: Foo.Spam = Foo.Spam.EGGS): Foo
+                        = somefixture.Foo(
+                    	baz = baz,
+                    	spam = spam
                     )
 
                     public fun createFooBaz(text: String = "text"): Foo.Baz = somefixture.Foo.Baz(
                     	text = text
                     )
 
-                    public fun createBar(baz: Bar.Baz = somefixture.createBarBaz()): Bar = somefixture.Bar(
-                    	baz = baz
+                    public fun createBar(baz: Bar.Baz = somefixture.createBarBaz(), spam: Bar.Spam = Bar.Spam.EGGS): Bar
+                        = somefixture.Bar(
+                    	baz = baz,
+                    	spam = spam
                     )
 
                     public fun createBarBaz(number: Int = 0): Bar.Baz = somefixture.Bar.Baz(
